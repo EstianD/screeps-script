@@ -17,8 +17,8 @@ module.exports.loop = () => {
   // Creep spawn section
   // Variables
   const maxHarvesters = 5;
-  const maxUpgraders = 4;
-  const maxBuilders = 3;
+  const maxUpgraders = 3;
+  const maxBuilders = 2;
   const maxRepairers = 1;
 
   // Check creep requirements
@@ -30,7 +30,7 @@ module.exports.loop = () => {
   if (harvesters < maxHarvesters) {
     // Create harvester
     Game.spawns.Spawn1.createCreep(
-      [WORK, WORK, MOVE, CARRY, CARRY],
+      [WORK, WORK, MOVE, CARRY, CARRY, CARRY],
       undefined,
       {
         role: "harvester",
@@ -39,7 +39,7 @@ module.exports.loop = () => {
     );
   } else if (upgraders < maxUpgraders) {
     Game.spawns.Spawn1.createCreep(
-      [WORK, WORK, MOVE, MOVE, CARRY, CARRY],
+      [WORK, WORK, MOVE, MOVE, CARRY, CARRY, CARRY],
       undefined,
       {
         role: "upgrader",
@@ -47,15 +47,23 @@ module.exports.loop = () => {
       }
     );
   } else if (builders < maxBuilders) {
-    Game.spawns.Spawn1.createCreep([WORK, WORK, WORK, MOVE, CARRY], undefined, {
-      role: "builder",
-      working: false,
-    });
+    Game.spawns.Spawn1.createCreep(
+      [WORK, WORK, MOVE, CARRY, CARRY],
+      undefined,
+      {
+        role: "builder",
+        working: false,
+      }
+    );
   } else if (repairers < maxRepairers) {
-    Game.spawns.Spawn1.createCreep([WORK, WORK, MOVE, MOVE, CARRY], undefined, {
-      role: "repairer",
-      working: false,
-    });
+    Game.spawns.Spawn1.createCreep(
+      [WORK, WORK, MOVE, CARRY, CARRY],
+      undefined,
+      {
+        role: "repairer",
+        working: false,
+      }
+    );
   }
 
   // TOWER

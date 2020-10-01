@@ -20,10 +20,9 @@ module.exports = {
     }
 
     // Find structure to build
-    var constructionSite = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
-    // console.log(constructionSite);
-    // console.log(creep.pos.findClosestByPath(FIND_MY_STRUCTURES));
-
+    var constructionSite = creep.pos.findClosestByRange(
+      FIND_CONSTRUCTION_SITES
+    );
     // If construction site
     // Go build
     if (constructionSite && creep.memory.working) {
@@ -40,11 +39,26 @@ module.exports = {
     }
     // Go harvest
     else {
-      // Find source to harvest
-      var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+      // If building, creep can get energy from storage
+      // If not building(upgrading), creep should harvest at source
+      // Get storage
+      var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (c) =>
+          c.structureType == STRUCTURE_CONTAINER &&
+          c.store[RESOURCE_ENERGY] > 0,
+      });
+      if (constructionSite && container) {
+        // Go to storage
+        if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(container);
+        }
+      } else {
+        // Find source to harvest
+        var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
 
-      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(source);
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(source);
+        }
       }
     }
   },

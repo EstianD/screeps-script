@@ -11,45 +11,51 @@ module.exports = {
       creep.memory.working = true;
     }
 
+    // const targets = creep.room.find(FIND_STRUCTURES, {
+    //   filter: (object) =>
+    //     object.structureType == STRUCTURE_CONTAINER &&
+    //     object.store[RESOURCE_ENERGY] < object.store.getCapacity(),
+    // });
+
     // Check if creep should transfer energy to spawn or an extension
     if (!creep.memory.working) {
       // Find closest spawn or extension which is not full
-      var structures = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+      var structure = creep.pos.findClosestByRange(FIND_STRUCTURES, {
         // Second arg takes a object with a filter property
-        filter: (structure) => {
-          // return structure.structureType == "extension";
+        filter: (s) => {
           return (
-            (structure.structureType == STRUCTURE_EXTENSION ||
-              structure.structureType == STRUCTURE_SPAWN ||
-              structure.structureType == STRUCTURE_CONTAINER ||
-              structure.structureType == STRUCTURE_TOWER) &&
-            structure.energy < structure.energyCapacity
+            (s.structureType == STRUCTURE_EXTENSION ||
+              s.structureType == STRUCTURE_SPAWN ||
+              s.structureType == STRUCTURE_CONTAINER ||
+              s.structureType == STRUCTURE_TOWER) &&
+            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0
           );
         },
       });
+      // console.log(structure);
+
       // If no structure need energy
       // Store energy in container
-      if (!structures) {
-        // console.log("asdasd");
-        var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-          filter: { structureType: STRUCTURE_CONTAINER },
-        });
-        // If container exist
-        if (container) {
-          if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            // Move towards structure
-            creep.moveTo(container);
-          }
-        }
-      }
+      // if (structures) {
+      // var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+      //   filter: { structureType: STRUCTURE_CONTAINER },
+      // });
+      // If container exist
+      // if (container) {
+      //   if (creep.transfer(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+      //     // Move towards structure
+      //     creep.moveTo(container);
+      //   }
+      // }
+      // }
 
       // console.log(structures);
       // If structure "to be built" exists
-      if (structures != undefined) {
+      if (structure != undefined) {
         // Try and transfer energy to structure if in range
-        if (creep.transfer(structures, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        if (creep.transfer(structure, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           // Move towards structure
-          creep.moveTo(structures);
+          creep.moveTo(structure);
         }
       }
       // If no buildings to be built, transfer energy to spawn
