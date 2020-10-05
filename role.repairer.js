@@ -43,9 +43,27 @@ module.exports = {
       // If energy == 0
     } else {
       //  Go harvest energy
-      var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(source);
+      // var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+      // if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+      //   creep.moveTo(source);
+      // }
+      var container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: (c) =>
+          c.structureType == STRUCTURE_CONTAINER &&
+          c.store[RESOURCE_ENERGY] > 0,
+      });
+      if (closestDamagedStructure && container) {
+        // Go to storage
+        if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(container);
+        }
+      } else {
+        // Find source to harvest
+        var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(source);
+        }
       }
     }
   },

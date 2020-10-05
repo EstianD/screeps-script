@@ -27,6 +27,7 @@ module.exports = {
             (s.structureType == STRUCTURE_EXTENSION ||
               s.structureType == STRUCTURE_SPAWN ||
               s.structureType == STRUCTURE_CONTAINER ||
+              s.structureType == STRUCTURE_STORAGE ||
               s.structureType == STRUCTURE_TOWER) &&
             s.store.getFreeCapacity(RESOURCE_ENERGY) > 0
           );
@@ -68,13 +69,26 @@ module.exports = {
     }
     // If creep is supposed to harvest energy
     else {
-      // Find closest source
-      var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+      // Find closest tombstone to harvest
+      var tombstone = creep.pos.findClosestByPath(FIND_TOMBSTONES, {
+        filter: (t) => {
+          return t.store[RESOURCE_ENERGY] > 0;
+        },
+      });
 
-      // Harvest source if source is in range
-      if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        // Move towards source
-        creep.moveTo(source);
+      if (tombstone) {
+        if (creep.withdraw(tombstone, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(tombstone);
+        }
+      } else {
+        // Find closest source
+        var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+
+        // Harvest source if source is in range
+        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+          // Move towards source
+          creep.moveTo(source);
+        }
       }
     }
   },
