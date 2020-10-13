@@ -5,6 +5,8 @@ var roleBuilder = require("role.builder");
 var roleRepairer = require("role.repairer");
 var roleTower = require("role.tower");
 var roleTransferer = require("role.transferer");
+var roleWarrior = require("role.warrior");
+var roleAdventurer = require("role.adventurer");
 
 module.exports.loop = () => {
   // Clear memory of dead creeps
@@ -18,10 +20,11 @@ module.exports.loop = () => {
   // Creep spawn section
   // Variables
   const maxHarvesters = 3;
-  const maxUpgraders = 2; //3
-  const maxBuilders = 2; //2
+  const maxUpgraders = 3; //3
+  const maxBuilders = 3; //2
   const maxRepairers = 1; //1
   const maxTransferers = 1;
+  const maxWarriors = 0;
 
   // Check creep requirements
   let harvesters = _.sum(Game.creeps, (c) => c.memory.role == "harvester");
@@ -29,6 +32,19 @@ module.exports.loop = () => {
   let builders = _.sum(Game.creeps, (c) => c.memory.role == "builder");
   let repairers = _.sum(Game.creeps, (c) => c.memory.role == "repairer");
   let transferers = _.sum(Game.creeps, (c) => c.memory.role == "transferer");
+  let warriors = _.sum(Game.creeps, (c) => c.memory.role == "warrior");
+
+  // Check for trasferers
+  if (transferers < maxTransferers) {
+    Game.spawns.Spawn1.createCreep(
+      [MOVE, MOVE, CARRY, CARRY, CARRY],
+      undefined,
+      {
+        role: "transferer",
+        working: false,
+      }
+    );
+  }
 
   if (harvesters < maxHarvesters) {
     // Create harvester
@@ -36,7 +52,6 @@ module.exports.loop = () => {
       [
         WORK,
         WORK,
-        WORK,
         MOVE,
         MOVE,
         CARRY,
@@ -47,7 +62,9 @@ module.exports.loop = () => {
         CARRY,
         CARRY,
         CARRY,
-      ],
+        CARRY,
+        CARRY,
+      ], //MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY
       undefined,
       {
         role: "harvester",
@@ -60,6 +77,7 @@ module.exports.loop = () => {
         WORK,
         WORK,
         WORK,
+        MOVE,
         MOVE,
         MOVE,
         CARRY,
@@ -79,7 +97,7 @@ module.exports.loop = () => {
     );
   } else if (builders < maxBuilders) {
     Game.spawns.Spawn1.createCreep(
-      [WORK, WORK, WORK, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY],
+      [WORK, WORK, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY],
       undefined,
       {
         role: "builder",
@@ -88,25 +106,25 @@ module.exports.loop = () => {
     );
   } else if (repairers < maxRepairers) {
     Game.spawns.Spawn1.createCreep(
-      [WORK, WORK, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY],
+      [WORK, WORK, MOVE, MOVE, CARRY, CARRY, CARRY, CARRY, CARRY],
       undefined,
       {
         role: "repairer",
         working: false,
       }
     );
-  } else if (transferers < maxTransferers) {
-    Game.spawns.Spawn1.createCreep([WORK, MOVE, CARRY, CARRY], undefined, {
-      role: "transferer",
-      working: false,
-    });
   }
 
   // TOWER
-  var tower = Game.getObjectById("5f71977214c95f83d270817b");
-  if (tower) {
-    roleTower.run(tower);
+  var tower_1 = Game.getObjectById("5f81ceda12dde312bf5078d9");
+  // var tower_2 = Game.getObjectById("5f7c66faf210d00fd1e0332f");
+  if (tower_1) {
+    roleTower.run(tower_1);
   }
+
+  // if (tower_2) {
+  //   roleTower.run(tower_2);
+  // }
 
   for (let name in Game.creeps) {
     //   Get creep object
@@ -126,6 +144,10 @@ module.exports.loop = () => {
       roleRepairer.run(creep);
     } else if (creep.memory.role == "transferer") {
       roleTransferer.run(creep);
+    } else if (creep.memory.role == "warrior") {
+      roleWarrior.run(creep);
+    } else if (creep.memory.role == "adventurer") {
+      roleAdventurer.run(creep);
     }
   }
 };

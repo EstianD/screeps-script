@@ -54,10 +54,13 @@ module.exports = {
         }
       } else {
         // Find source to harvest
-        var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
+        var source = creep.room.find(FIND_SOURCES_ACTIVE);
 
-        if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-          creep.moveTo(source);
+        if (source[1]) {
+          if (creep.harvest(source[1]) == ERR_NOT_IN_RANGE) {
+            // creep move to source
+            creep.moveTo(source[1]);
+          }
         }
       }
     }

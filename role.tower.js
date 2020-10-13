@@ -17,6 +17,7 @@ module.exports = {
 
     // Attack
     var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+    console.log(closestHostile);
     if (closestHostile) {
       tower.attack(closestHostile);
     }

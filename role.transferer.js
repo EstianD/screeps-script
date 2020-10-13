@@ -49,27 +49,39 @@ module.exports = {
           s.structureType == STRUCTURE_CONTAINER && s.store.energy > 0,
       });
 
-      console.log(container);
+      var storage = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+        filter: (s) =>
+          s.structureType == STRUCTURE_STORAGE && s.store.energy > 0,
+      });
+
+      // Find dropped resources
+      const droppedResources = creep.pos.findClosestByRange(
+        FIND_DROPPED_RESOURCES
+      );
+
+      // console.log(container);
 
       if (container) {
-        console.log("1");
         if (creep.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
           creep.moveTo(container);
         }
-      } else if (!container) {
-        console.log("2");
+      } else if (storage) {
+        if (creep.withdraw(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(storage);
+        }
+      } else {
         var tombstone = creep.pos.findClosestByPath(FIND_TOMBSTONES, {
           filter: (t) => {
             return t.store[RESOURCE_ENERGY] > 0;
           },
         });
         if (tombstone) {
-          console.log("3");
           if (creep.withdraw(tombstone, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(tombstone);
           }
+        } else if (creep.pickup(droppedResources) == ERR_NOT_IN_RANGE) {
+          creep.moveTo(droppedResources);
         } else {
-          console.log("4");
           var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
 
           // Harvest source if source is in range
