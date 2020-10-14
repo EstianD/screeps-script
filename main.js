@@ -16,7 +16,17 @@ module.exports.loop = () => {
     }
   }
 
-  // console.log(Game.spawns.Spawn1.energy);
+  // Safemode
+  const roomController = Game.rooms["W12N27"].controller;
+  // Find hostiles
+  var targets = roomController.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+  if (targets) {
+    if (roomController.safeModeAvailable) {
+      console.log("activate safemode");
+      roomController.activateSafemode();
+    }
+  }
+
   // Creep spawn section
   // Variables
   const maxHarvesters = 3;
