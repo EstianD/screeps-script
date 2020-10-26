@@ -1,4 +1,4 @@
-var roleBuilder = require("./role.builder");
+// var roleBuilder = require("./role.builder");
 
 module.exports = {
   run: function (creep) {
@@ -21,9 +21,8 @@ module.exports = {
           filter: function (structure) {
             //  console.log(structure.structureType);
             return (
-              structure.structureType != STRUCTURE_WALL &&
               structure.structureType != STRUCTURE_RAMPART &&
-              structure.hits < structure.hitsMax
+              structure.hits < 200000
             );
           },
         }
@@ -40,8 +39,6 @@ module.exports = {
         if (creep.repair(closestDamagedStructure) == ERR_NOT_IN_RANGE) {
           creep.moveTo(closestDamagedStructure);
         }
-      } else if (!closestDamagedStructure && creep.memory.working) {
-        roleBuilder.run(creep);
       }
       // If energy == 0
     } else {

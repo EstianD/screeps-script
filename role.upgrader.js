@@ -1,7 +1,7 @@
 module.exports = {
   run: function (creep) {
     //  Variables
-    const maxControllerLvl = 5;
+    const maxControllerLvl = 10;
 
     // Check if creep is harvesting AND have max energy
     // Upgrade controller
